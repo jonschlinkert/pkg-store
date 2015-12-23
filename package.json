@@ -1,0 +1,56 @@
+{
+  "name": "pkg-store",
+  "description": "Use package.json as a config store.",
+  "version": "0.1.0",
+  "homepage": "https://github.com/jonschlinkert/pkg-store",
+  "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
+  "repository": "jonschlinkert/pkg-store",
+  "bugs": {
+    "url": "https://github.com/jonschlinkert/pkg-store/issues"
+  },
+  "license": "MIT",
+  "files": [
+    "index.js"
+  ],
+  "main": "index.js",
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "dependencies": {
+    "data-store": "^0.12.0"
+  },
+  "devDependencies": {
+    "mocha": "*"
+  },
+  "keywords": [
+    "config",
+    "data",
+    "get",
+    "json",
+    "package",
+    "package.json",
+    "package-json",
+    "pkg",
+    "set",
+    "store",
+    "update"
+  ],
+  "verb": {
+    "related": {
+      "list": [
+        "data-store",
+        "find-pkg",
+        "normalize-pkg"
+      ]
+    },
+    "reflinks": [
+      "data-store"
+    ],
+    "plugins": [
+      "gulp-format-md"
+    ]
+  }
+}

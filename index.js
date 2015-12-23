@@ -12,5 +12,3 @@ var Store = require('data-store');
 module.exports = function(cwd, prop) {
   return new Store('package', {cwd: cwd});
 };
-
-

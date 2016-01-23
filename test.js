@@ -78,9 +78,9 @@ describe('store', function() {
     pkg.set('baz', null);
     pkg.set('qux', undefined);
 
+    assert(pkg.has('baz'));
     assert(pkg.has('foo'));
     assert(!pkg.has('bar'));
-    assert(!pkg.has('baz'));
     assert(!pkg.has('qux'));
   });
 
@@ -93,10 +93,10 @@ describe('store', function() {
     assert(pkg.has('a.b.c.d.x'));
     assert(pkg.has('a.b.c.e'));
     assert(pkg.has('a.b.g.j'));
+    assert(pkg.has('a.b.c.e.f'));
 
     assert(!pkg.has('a.b.bar'));
     assert(!pkg.has('a.b.c.d.z'));
-    assert(!pkg.has('a.b.c.e.f'));
     assert(!pkg.has('a.b.c.e.z'));
     assert(!pkg.has('a.b.g.j.k'));
     assert(!pkg.has('a.b.g.j.z'));
@@ -122,7 +122,7 @@ describe('store', function() {
     assert(pkg.hasOwn('a.b.c.d'));
     assert(pkg.hasOwn('a.b.c.d.x'));
     assert(!pkg.hasOwn('a.b.c.d.z'));
-    assert(!pkg.has('a.b.c.e.f'));
+    assert(pkg.has('a.b.c.e.f'));
     assert(pkg.hasOwn('a.b.c.e.f'));
     assert(!pkg.hasOwn('a.b.c.e.bar'));
     assert(!pkg.has('a.b.g.j.k'));

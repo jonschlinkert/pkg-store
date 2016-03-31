@@ -1,4 +1,4 @@
-# pkg-store [![NPM version](https://img.shields.io/npm/v/pkg-store.svg)](https://www.npmjs.com/package/pkg-store) [![Build Status](https://img.shields.io/travis/jonschlinkert/pkg-store.svg)](https://travis-ci.org/jonschlinkert/pkg-store)
+# pkg-store [![NPM version](https://img.shields.io/npm/v/pkg-store.svg?style=flat)](https://www.npmjs.com/package/pkg-store) [![NPM downloads](https://img.shields.io/npm/dm/pkg-store.svg?style=flat)](https://npmjs.org/package/pkg-store) [![Build Status](https://img.shields.io/travis/jonschlinkert/pkg-store.svg?style=flat)](https://travis-ci.org/jonschlinkert/pkg-store)
 
 > Use package.json as a config store.
 
@@ -7,10 +7,24 @@
 Install with [npm](https://www.npmjs.com/):
 
 ```sh
-$ npm i pkg-store --save
+$ npm install pkg-store --save
 ```
 
+Inherits [cache-base](https://github.com/jonschlinkert/cache-base), please see the `cache-base` documentation for more details.
+
 ## Usage
+
+Pass the `cwd` and options to use, or an options object with `cwd` or `path`. If nothing is passed, the current working directory will be used.
+
+```js
+var pkg = require('pkg-store')(cwd, options);
+// or
+var pkg = require('pkg-store')(options);
+// or
+var pkg = require('pkg-store')();
+```
+
+**Example**
 
 ```js
 var pkg = require('pkg-store')(process.cwd());
@@ -18,81 +32,122 @@ var pkg = require('pkg-store')(process.cwd());
 
 ## API
 
-All methods allow the optional use of dot-notation for property keys. See the [data-store](https://github.com/jonschlinkert/data-store) documentation for all available methods.
+Inherits [cache-base](https://github.com/jonschlinkert/cache-base), please see the `cache-base` documentation for more details.
 
-**.set/.get**
-
-The `.set` method automatically persists values to `package.json`:
+### .set
 
 ```js
+pkg.set(key, value);
+```
+
+Set property `key` with the given `value`.
+
+**Example**
+
+```js
+// given {"name": "my-project"}
+pkg.set('bin.foo', 'bar');
+
+console.log(pkg.data);
+//=> {"name": "my-project", "bin": {"foo": "bar"}}
+```
+
+### .save
+
+Persist package.json to the file system at `pkg.path`.
+
+```js
+pkg.save();
+```
+
+### .get
+
+```js
+pkg.get(key);
+```
+
+Get property `key` from package.json.
+
+**Example**
+
+```js
+// given {"name": "my-project"}
 pkg.set('bin.foo', 'bar');
 
 console.log(pkg.get('bin'));
-//=> { foo: 'bar' }
-
-console.log(pkg.get('bin.foo'));
-//=> 'bar'
+//=> {"foo": "bar"}
 ```
 
-**.has**
-
-Returns `true` if `package.json` has the given property:
+### .has
 
 ```js
+pkg.has(key);
+```
+
+Returns `true` if `package.json` has property `key`.
+
+**Example**
+
+```js
+// given: {"name": "my-project"}
 console.log(pkg.has('name'));
 //=> true
-
 console.log(pkg.has('zzzzzzz'));
 //=> false
 ```
 
-**.union**
+### .union
 
-Add and append array values (automatically persists values to `package.json`):
+```js
+pkg.union(key, val);
+```
+
+Create array `key`, or concatenate values to array `key`. Also uniquifies the array.
+
+**Example**
 
 ```js
 pkg.union('keywords', 'foo');
-pkg.union('keywords', 'bar');
-pkg.union('keywords', 'baz');
+pkg.union('keywords', ['bar', 'baz']);
 
 console.log(pkg.get('keywords'));
 //=> ['foo', 'bar', 'baz']
 ```
 
-### Events
-
-Most methods also emit an event. See [data-store](https://github.com/jonschlinkert/data-store) for more details.
-
-```js
-pkg.on('union', function(key, value) {
-  console.log(arguments);
-  // { '0': 'keywords', '1': 'foo' }
-  // { '0': 'keywords', '1': 'bar' }
-  // { '0': 'keywords', '1': 'baz' }
-});
-
-pkg.union('keywords', 'foo');
-pkg.union('keywords', 'bar');
-pkg.union('keywords', 'baz');
-```
-
 ## Related projects
 
+You might also be interested in these projects:
+
 * [data-store](https://www.npmjs.com/package/data-store): Easily get, set and persist config data. | [homepage](https://github.com/jonschlinkert/data-store)
+* [expand-pkg](https://www.npmjs.com/package/expand-pkg): Parse string values in package.json into objects. | [homepage](https://github.com/jonschlinkert/expand-pkg)
 * [find-pkg](https://www.npmjs.com/package/find-pkg): Find the first directory with a package.json, recursing up, starting with the given directory. Similar… [more](https://www.npmjs.com/package/find-pkg) | [homepage](https://github.com/jonschlinkert/find-pkg)
-* [normalize-pkg](https://www.npmjs.com/package/normalize-pkg): Normalize values in package.json to improve compatibility, programmatic readability and usefulness with third party libs. | [homepage](https://github.com/jonschlinkert/normalize-pkg/)
+* [normalize-pkg](https://www.npmjs.com/package/normalize-pkg): Normalize values in package.json using the map-schema library. | [homepage](https://github.com/jonschlinkert/normalize-pkg)
+
+## Contributing
+
+Pull requests and stars are always welcome. For bugs and feature requests, [please create an issue](https://github.com/jonschlinkert/pkg-store/issues/new).
+
+## Building docs
+
+Generate readme and API documentation with [verb](https://github.com/verbose/verb):
+
+```sh
+$ npm install verb && npm run docs
+```
+
+Or, if [verb](https://github.com/verbose/verb) is installed globally:
+
+```sh
+$ verb
+```
 
 ## Running tests
 
 Install dev dependencies:
 
 ```sh
-$ npm i -d && npm test
+$ npm install -d && npm test
 ```
-
-## Contributing
-
-Pull requests and stars are always welcome. For bugs and feature requests, [please create an issue](https://github.com/jonschlinkert/pkg-store/issues/new).
 
 ## Author
 
@@ -103,9 +158,9 @@ Pull requests and stars are always welcome. For bugs and feature requests, [plea
 
 ## License
 
-Copyright © 2016 [Jon Schlinkert](https://github.com/jonschlinkert)
-Released under the MIT license.
+Copyright © 2016, [Jon Schlinkert](https://github.com/jonschlinkert).
+Released under the [MIT license](https://github.com/jonschlinkert/pkg-store/blob/master/LICENSE).
 
 ***
 
-_This file was generated by [verb](https://github.com/verbose/verb) on January 23, 2016._
+_This file was generated by [verb](https://github.com/verbose/verb), v, on March 30, 2016._

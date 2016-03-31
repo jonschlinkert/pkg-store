@@ -1,9 +1,6 @@
 'use strict';
 
-/**
- * Module dependencies
- */
-
+var fs = require('fs');
 var utils = require('lazy-cache')(require);
 var fn = require;
 require = utils;
@@ -19,6 +16,14 @@ require = fn;
 
 utils.isObject = function(val) {
   return utils.typeOf(val) === 'object';
+};
+
+utils.exists = function(fp) {
+  try {
+    fs.statSync(fp);
+    return true;
+  } catch (err) {}
+  return false;
 };
 
 /**

@@ -108,7 +108,10 @@ Pkg.prototype.save = function() {
  */
 
 Pkg.prototype.read = function() {
-  return JSON.parse(fs.readFileSync(this.path, 'utf8'));
+  if (utils.exists(this.path)) {
+    return JSON.parse(fs.readFileSync(this.path, 'utf8'));
+  }
+  return {};
 };
 
 /**

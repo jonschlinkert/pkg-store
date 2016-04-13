@@ -42,12 +42,12 @@ function Pkg(cwd, options) {
 
   if (utils.isObject(cwd)) {
     options = cwd;
-    cwd = process.cwd();
+    cwd = null;
   }
 
   this.options = options || {};
-  this.cwd = this.options.cwd || cwd;
-  this.path = this.options.path || path.resolve(this.cwd, 'package.json');
+  cwd = this.options.cwd || cwd || process.cwd();
+  this.path = this.options.path || path.resolve(cwd, 'package.json');
   var data;
 
   Object.defineProperty(this, 'data', {

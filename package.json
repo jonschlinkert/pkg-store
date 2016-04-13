@@ -1,7 +1,7 @@
 {
   "name": "pkg-store",
   "description": "Use package.json as a config store.",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "homepage": "https://github.com/jonschlinkert/pkg-store",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
   "repository": "jonschlinkert/pkg-store",

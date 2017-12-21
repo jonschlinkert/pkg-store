@@ -46,17 +46,7 @@ console.log(pkg.data);
 //=> { name: 'your-project', ... }
 ```
 
-### [.data](index.js#L61)
-
-Get and set `pkg.data`.
-
-**Example**
-
-```js
-console.log(pkg.data);
-```
-
-### [.save](index.js#L79)
+### [.save](index.js#L63)
 
 Write the `pkg.data` object to the file system at `pkg.path`.
 
@@ -70,7 +60,7 @@ Write the `pkg.data` object to the file system at `pkg.path`.
 pkg.save();
 ```
 
-### [.read](index.js#L99)
+### [.read](index.js#L83)
 
 Reads `pkg.path` from the file system and returns an object.
 

@@ -12,7 +12,7 @@ let pkg;
 
 describe('store', function() {
   beforeEach(function() {
-    return writeJson(fixtures('package.json'))
+    return writeJson(fixtures('package.json'), {})
       .then(() => {
         pkg = new Store(fixtures());
       });
@@ -24,7 +24,7 @@ describe('store', function() {
 
   describe('resolve store path', function() {
     it('should get a store at the given "cwd"', function() {
-      return writeJson(fixtures('foo/package.json'))
+      return writeJson(fixtures('foo/package.json'), {})
         .then(() => {
           pkg = new Store(fixtures('foo'));
           pkg.set('foo', 'bar');
@@ -36,7 +36,7 @@ describe('store', function() {
     });
 
     it('should get a store at the given "options.path"', function() {
-      return writeJson(fixtures('foo/bar.json'))
+      return writeJson(fixtures('foo/bar.json'), {})
         .then(() => {
           pkg = new Store({path: fixtures('foo/bar.json')});
           pkg.set('foo', 'bar');

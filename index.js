@@ -1,7 +1,7 @@
 /*!
  * pkg-store <https://github.com/jonschlinkert/pkg-store>
  *
- * Copyright (c) 2015, 2017, Jon Schlinkert.
+ * Copyright (c) 2015-2017, Jon Schlinkert.
  * Released under the MIT License.
  */
 
@@ -36,7 +36,7 @@ const write = require('write-json');
 
 class Pkg extends Cache {
   constructor(cwd, options) {
-    super('cache');
+    super('data');
 
     if (typeof cwd !== 'string') {
       options = cwd;
@@ -46,23 +46,7 @@ class Pkg extends Cache {
     this.options = Object.assign({cwd: cwd}, options);
     this.cwd = path.resolve(this.options.cwd);
     this.path = this.options.path || path.resolve(this.cwd, 'package.json');
-  }
-
-  /**
-   * Get and set `pkg.data`.
-   *
-   * ```js
-   * console.log(pkg.data);
-   * ```
-   * @name .data
-   * @api public
-   */
-
-  set data(val) {
-    this.cache = val;
-  }
-  get data() {
-    return this.cache || (this.cache = this.read());
+    this.data = this.read();
   }
 
   /**
@@ -98,7 +82,13 @@ class Pkg extends Cache {
 
   read() {
     if (fs.existsSync(this.path)) {
-      return JSON.parse(fs.readFileSync(this.path, 'utf8'));
+      try {
+        return JSON.parse(fs.readFileSync(this.path, 'utf8'));
+      } catch (err) {
+        err.path = this.path;
+        err.reason = 'Cannot read ' + this.path;
+        throw err;
+      }
     }
     return {};
   }

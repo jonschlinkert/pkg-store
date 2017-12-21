@@ -1,118 +1,108 @@
 /*!
  * pkg-store <https://github.com/jonschlinkert/pkg-store>
  *
- * Copyright (c) 2015, Jon Schlinkert.
- * Licensed under the MIT License.
+ * Copyright (c) 2015, 2017, Jon Schlinkert.
+ * Released under the MIT License.
  */
 
 'use strict';
 
-var fs = require('fs');
-var path = require('path');
-var util = require('util');
-var cache = require('cache-base');
-var Cache = cache.namespace('data');
-var utils = require('./utils');
+const fs = require('fs');
+const path = require('path');
+const Cache = require('cache-base');
+const write = require('write-json');
 
 /**
  * Initialize a new `Pkg` store at the given `cwd` with
  * the specified `options`.
  *
  * ```js
- * var pkg = require('pkg-store')(process.cwd());
+ * const pkg = require('pkg-store')(process.cwd());
+ * const pkg = new Pkg(cwd, options);
+ * // or
+ * const pkg = new Pkg(options);
  *
  * console.log(pkg.path);
  * //=> '~/your-project/package.json'
  *
  * console.log(pkg.data);
- * //=> {name: 'your-project', ...}
+ * //=> { name: 'your-project', ... }
  * ```
- *
+ * @name Pkg
  * @param  {String} `cwd` Directory of the package.json to read.
- * @param  {Object} `options` Options to pass to [expand-pkg][] and [normalize-pkg][].
+ * @param  {Object} `options`
  * @api public
  */
 
-function Pkg(cwd, options) {
-  if (!(this instanceof Pkg)) {
-    return new Pkg(cwd, options);
-  }
+class Pkg extends Cache {
+  constructor(cwd, options) {
+    super('cache');
 
-  Cache.call(this);
-
-  if (utils.isObject(cwd)) {
-    options = cwd;
-    cwd = null;
-  }
-
-  this.options = options || {};
-  cwd = this.options.cwd || cwd || process.cwd();
-  this.path = this.options.path || path.resolve(cwd, 'package.json');
-  var data;
-
-  Object.defineProperty(this, 'data', {
-    configurable: true,
-    enumerable: true,
-    set: function(val) {
-      data = val;
-    },
-    get: function() {
-      return data || (data = this.read());
+    if (typeof cwd !== 'string') {
+      options = cwd;
+      cwd = process.cwd();
     }
-  });
-}
 
-/**
- * Inherit `cache-base`
- */
-
-util.inherits(Pkg, Cache);
-
-/**
- * Concatenate the given val and uniquify array `key`.
- *
- * ```js
- * pkg.union('keywords', ['foo', 'bar', 'baz']);
- * ```
- * @param {String} `key`
- * @param {String} `val` Item or items to add to the array.
- * @return {Object} Returns the instance for chaining.
- * @api public
- */
-
-Pkg.prototype.union = function(key, val) {
-  utils.union(this.data, key, val);
-  return this;
-};
-
-/**
- * Write the `pkg.data` object to `pkg.path` on the file system.
- *
- * ```js
- * pkg.save();
- * ```
- * @api public
- */
-
-Pkg.prototype.save = function() {
-  utils.writeJson.sync(this.path, this.data);
-};
-
-/**
- * Reads `pkg.path` from the file system and returns an object.
- *
- * ```js
- * var data = pkg.read();
- * ```
- * @api public
- */
-
-Pkg.prototype.read = function() {
-  if (utils.exists(this.path)) {
-    return JSON.parse(fs.readFileSync(this.path, 'utf8'));
+    this.options = Object.assign({cwd: cwd}, options);
+    this.cwd = path.resolve(this.options.cwd);
+    this.path = this.options.path || path.resolve(this.cwd, 'package.json');
   }
-  return {};
-};
+
+  /**
+   * Get and set `pkg.data`.
+   *
+   * ```js
+   * console.log(pkg.data);
+   * ```
+   * @name .data
+   * @api public
+   */
+
+  set data(val) {
+    this.cache = val;
+  }
+  get data() {
+    return this.cache || (this.cache = this.read());
+  }
+
+  /**
+   * Write the `pkg.data` object to the file system at `pkg.path`.
+   *
+   * ```js
+   * pkg.save();
+   * ```
+   * @name .save
+   * @param {Function} `callback` (optional)
+   * @api public
+   */
+
+  save(cb) {
+    if (typeof cb !== 'function') {
+      write.sync(this.path, this.data);
+      return;
+    }
+    write(this.path, this.data, cb);
+    return this;
+  }
+
+  /**
+   * Reads `pkg.path` from the file system and returns an object.
+   *
+   * ```js
+   * const data = pkg.read();
+   * ```
+   * @name .read
+   * @return {undefined}
+   * @api public
+   */
+
+  read() {
+    if (fs.existsSync(this.path)) {
+      return JSON.parse(fs.readFileSync(this.path, 'utf8'));
+    }
+    return {};
+  }
+}
 
 /**
  * Expoe `Pkg`

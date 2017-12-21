@@ -1,84 +1,73 @@
 'use strict';
 
 require('mocha');
-var fs = require('fs');
-var path = require('path');
-var assert = require('assert');
-var writeJson = require('write-json');
-var del = require('delete');
-var store = require('./');
-var pkg;
-
-var fixtures = path.resolve.bind(path, 'fixtures');
-function exists(fp) {
-  try {
-    fs.statSync(fp);
-    return true;
-  } catch (err) {}
-  return false;
-}
+const fs = require('fs');
+const path = require('path');
+const assert = require('assert');
+const writeJson = require('write-json');
+const del = require('delete');
+const Store = require('./');
+const fixtures = path.resolve.bind(path, 'fixtures');
+let pkg;
 
 describe('store', function() {
-  beforeEach(function(cb) {
-    writeJson(fixtures('package.json'), {}, function(err) {
-      if (err) return cb(err);
-      pkg = store(fixtures());
-      cb();
-    });
+  beforeEach(function() {
+    return writeJson(fixtures('package.json'))
+      .then(() => {
+        pkg = new Store(fixtures());
+      });
   });
 
-  afterEach(function(cb) {
-    del(fixtures(), cb);
+  afterEach(function() {
+    return del(fixtures());
   });
 
   describe('resolve store path', function() {
-    it('should get a store at the given `cwd`', function(cb) {
-      writeJson(fixtures('foo/package.json'), {}, function(err) {
-        if (err) return cb(err);
-        pkg = store(fixtures('foo'));
-        pkg.set('foo', 'bar');
-        assert.equal(path.basename(pkg.path), 'package.json');
-        assert(pkg.data.hasOwnProperty('foo'));
-        assert.equal(pkg.data.foo, 'bar');
-        assert(exists('fixtures/foo/package.json'));
-        cb();
-      });
+    it('should get a store at the given "cwd"', function() {
+      return writeJson(fixtures('foo/package.json'))
+        .then(() => {
+          pkg = new Store(fixtures('foo'));
+          pkg.set('foo', 'bar');
+          assert.equal(path.basename(pkg.path), 'package.json');
+          assert(pkg.data.hasOwnProperty('foo'));
+          assert.equal(pkg.data.foo, 'bar');
+          assert(fs.existsSync('fixtures/foo/package.json'));
+        });
     });
 
-    it('should get a store at the given `options.path`', function(cb) {
-      writeJson(fixtures('foo/bar.json'), {}, function(err) {
-        if (err) return cb(err);
-        pkg = store({path: fixtures('foo/bar.json')});
-        pkg.set('foo', 'bar');
-        assert.equal(path.basename(pkg.path), 'bar.json');
-        assert(pkg.data.hasOwnProperty('foo'));
-        assert.equal(pkg.data.foo, 'bar');
-        assert(exists('fixtures/foo/bar.json'));
-        cb();
-      });
+    it('should get a store at the given "options.path"', function() {
+      return writeJson(fixtures('foo/bar.json'))
+        .then(() => {
+          pkg = new Store({path: fixtures('foo/bar.json')});
+          pkg.set('foo', 'bar');
+          assert.equal(path.basename(pkg.path), 'bar.json');
+          assert(pkg.data.hasOwnProperty('foo'));
+          assert.equal(pkg.data.foo, 'bar');
+          assert(fs.existsSync('fixtures/foo/bar.json'));
+        });
     });
   });
 
   describe('.set', function() {
-    it('should `.set()` a value on the store', function() {
+    it('should set a value on the store', function() {
       pkg.set('one', 'two');
       assert.equal(pkg.data.one, 'two');
     });
 
-    it('should `.set()` an object', function() {
+    it('should set an object', function() {
       pkg.set({four: 'five', six: 'seven'});
       assert.equal(pkg.data.four, 'five');
       assert.equal(pkg.data.six, 'seven');
     });
 
-    it('should `.set()` a nested value', function() {
+    it('should set a nested value', function() {
       pkg.set('a.b.c.d', {e: 'f'});
       assert.equal(pkg.data.a.b.c.d.e, 'f');
     });
   });
 
   describe('.union', function() {
-    it('should `.union()` a value on the store', function() {
+    it('should union a value on the store', function() {
       pkg.union('one', 'two');
       assert.deepEqual(pkg.data.one, ['two']);
     });
@@ -104,7 +93,7 @@ describe('store', function() {
   });
 
   describe('.has', function() {
-    it('should return true if a key `.has()` on the store', function() {
+    it('should return true if a key has on the store', function() {
       pkg.set('foo', 'bar');
       pkg.set('baz', null);
       pkg.set('qux', undefined);
@@ -115,7 +104,7 @@ describe('store', function() {
       assert(!pkg.has('qux'));
     });
 
-    it('should return true if a nested key `.has()` on the store', function() {
+    it('should return true if a nested key has on the store', function() {
       pkg.set('a.b.c.d', {x: 'zzz'});
       pkg.set('a.b.c.e', {f: null});
       pkg.set('a.b.g.j', {k: undefined});
@@ -135,12 +124,12 @@ describe('store', function() {
   });
 
   describe('.get', function() {
-    it('should `.get()` a stored value', function() {
+    it('should get a stored value', function() {
       pkg.set('three', 'four');
       assert.equal(pkg.get('three'), 'four');
     });
 
-    it('should `.get()` a nested value', function() {
+    it('should get a nested value', function() {
       pkg.set({a: {b: {c: 'd'}}});
       assert.equal(pkg.get('a.b.c'), 'd');
     });
@@ -156,7 +145,7 @@ describe('store', function() {
   });
 
   describe('.del', function() {
-    it('should `.del()` a stored value', function() {
+    it('should delete a stored value', function() {
       pkg.set('a', 'b');
       pkg.set('c', 'd');
       assert(pkg.data.hasOwnProperty('a'));
@@ -171,7 +160,7 @@ describe('store', function() {
       assert(!pkg.data.hasOwnProperty('c'));
     });
 
-    it('should `.del()` multiple stored values', function() {
+    it('should delete multiple stored values', function() {
       pkg.set('a', 'b');
       pkg.set('c', 'd');
       pkg.set('e', 'f');

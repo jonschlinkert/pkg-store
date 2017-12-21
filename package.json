@@ -10,27 +10,23 @@
   },
   "license": "MIT",
   "files": [
-    "index.js",
-    "utils.js"
+    "index.js"
   ],
   "main": "index.js",
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=6"
   },
   "scripts": {
     "test": "mocha"
   },
   "dependencies": {
-    "cache-base": "^0.8.2",
-    "kind-of": "^3.0.2",
-    "lazy-cache": "^1.0.3",
-    "union-value": "^0.2.3",
-    "write-json": "^0.2.2"
+    "cache-base": "^2.0.2",
+    "write-json": "^2.0.0"
   },
   "devDependencies": {
-    "delete": "^0.3.0",
-    "gulp-format-md": "^0.1.7",
-    "mocha": "^2.4.5"
+    "delete": "^1.1.0",
+    "gulp-format-md": "^1.0.0",
+    "mocha": "^3.5.3"
   },
   "keywords": [
     "config",
@@ -38,8 +34,8 @@
     "get",
     "json",
     "package",
-    "package.json",
     "package-json",
+    "package.json",
     "pkg",
     "set",
     "store",
@@ -58,15 +54,11 @@
     "related": {
       "list": [
         "data-store",
-        "find-pkg",
         "expand-pkg",
+        "find-pkg",
         "normalize-pkg"
       ]
     },
-    "reflinks": [
-      "verb",
-      "cache-base"
-    ],
     "lint": {
       "reflinks": true
     }

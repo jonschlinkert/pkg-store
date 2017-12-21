@@ -1,10 +1,10 @@
 'use strict';
 
-var pkg = require('./')(process.cwd(), 'verb');
+var Pkg = require('./');
+var pkg = new Pkg(process.cwd());
 
 pkg.union('keywords', 'foo');
 pkg.union('keywords', 'bar');
 pkg.union('keywords', 'baz');
 
-pkg.normalize();
 console.log(pkg.data);
